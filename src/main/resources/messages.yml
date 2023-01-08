@@ -1,0 +1,30 @@
+General:
+  prefix: "&6KBFFA &8> &r"
+  noPermission: "&cNo tienes permiso para esto."
+  noConsole: "&cNo puedes poner comandos en consola."
+
+
+Commands:
+  Help-User:
+    - ""
+    - ""
+    - ""
+    - ""
+  Help-Admin:
+    - "======================"
+    - "- /arena create (arenaName)"
+    - "- /arena setSpawn (arenaName)"
+    - "- /arena setMinLobby (arenaName)"
+    - "- /arena setMaxLobby (arenaName)"
+    - "- /arena setMinArena (arenaName)"
+    - "- /arena setMaxArena (arenaName)"
+    - "- /arena save (arenaName)"
+    - "======================"
+
+Game:
+  isInGame: "&cYa estas en un mapa, usa &f/kbffa leave &cpara salir."
+  noIsGame: "&cNo te encuentras en el mapa."
+  noAvailable: "&cNo hay mapas disponibles."
+
+
+version: 1.0

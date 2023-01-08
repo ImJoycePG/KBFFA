@@ -1,0 +1,9 @@
+main: net.imjoycepg.mc.KBFFA
+name: KBFAA
+version: 1.0
+description: KBFAA Custom Plugin
+commands:
+  kbffa:
+    description: Main Command
+  arena:
+    description: Create Maps and more
