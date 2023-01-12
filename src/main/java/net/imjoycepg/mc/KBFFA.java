@@ -5,8 +5,11 @@ import net.imjoycepg.mc.Commands.ArenaCMD;
 import net.imjoycepg.mc.Commands.MainCMD;
 import net.imjoycepg.mc.Game.ArenaFile;
 import net.imjoycepg.mc.Game.ArenaManager;
-import net.imjoycepg.mc.Game.GameState;
 import net.imjoycepg.mc.Game.MapChangeTask;
+import net.imjoycepg.mc.Handlers.ArenaEvent;
+import net.imjoycepg.mc.Handlers.GeneralEvent;
+import net.imjoycepg.mc.Handlers.ItemsEvent;
+import net.imjoycepg.mc.Handlers.LobbyEvent;
 import net.imjoycepg.mc.Util.ConfigFile;
 import net.imjoycepg.mc.Util.LocationUtil;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,8 +25,6 @@ public class KBFFA extends JavaPlugin {
     private final ArenaFile arenaFile = new ArenaFile();
     private final LocationUtil locationUtil = new LocationUtil();
 
-
-
     @Override
     public void onEnable() {
         instance = this;
@@ -31,12 +32,15 @@ public class KBFFA extends JavaPlugin {
         messages = new ConfigFile(this, "messages.yml");
 
 
-        this.getCommand("kbffa").setExecutor(new MainCMD());
-        this.getCommand("arena").setExecutor(new ArenaCMD());
+        getCommand("kbffa").setExecutor(new MainCMD());
+        getCommand("arena").setExecutor(new ArenaCMD());
+
+        getServer().getPluginManager().registerEvents(new GeneralEvent(), this);
+        getServer().getPluginManager().registerEvents(new LobbyEvent(), this);
+        getServer().getPluginManager().registerEvents(new ArenaEvent(), this);
+        getServer().getPluginManager().registerEvents(new ItemsEvent(), this);
+
         arenaManager.loadArenas();
-
-        arenaManager.getArenas().get(0).setGameState(GameState.IN_GAME);
-
         mapChangeTask.runTaskTimer(this, 0, 20L * 60L * settings.getInt("Time.ChangeMap"));
     }
 
@@ -44,5 +48,6 @@ public class KBFFA extends JavaPlugin {
     public void onDisable() {
         settings.save();
         messages.save();
+        arenaManager.ServerOff();
     }
 }

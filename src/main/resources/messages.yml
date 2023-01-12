@@ -2,29 +2,52 @@ General:
   prefix: "&6KBFFA &8> &r"
   noPermission: "&cNo tienes permiso para esto."
   noConsole: "&cNo puedes poner comandos en consola."
+  reloadYAML: "&aSe reiniciaron los mensajes y settings."
+  noMainLobby: "&cNo hay lobby principal establecido"
 
 
 Commands:
   Help-User:
-    - ""
-    - ""
-    - ""
-    - ""
+    - "&7======================"
+    - "&c/kbffa join &f- &7Para entrar al mapa"
+    - "&c/kbffa leave &f- &7Para salir del mapa"
+    - "&7======================"
   Help-Admin:
-    - "======================"
-    - "- /arena create (arenaName)"
-    - "- /arena setSpawn (arenaName)"
-    - "- /arena setMinLobby (arenaName)"
-    - "- /arena setMaxLobby (arenaName)"
-    - "- /arena setMinArena (arenaName)"
-    - "- /arena setMaxArena (arenaName)"
-    - "- /arena save (arenaName)"
-    - "======================"
+    - "&7======================"
+    - "&c/arena create [ArenaName]"
+    - "&c/arena setSpawn [ArenaName]"
+    - "&c/arena setMinLobby [ArenaName]"
+    - "&c/arena setMaxLobby [ArenaName]"
+    - "&c/arena setMinArena [ArenaName]"
+    - "&c/arena setMaxArena [ArenaName]"
+    - "&c/arena save [ArenaName]"
+    - "&7======================"
 
 Game:
   isInGame: "&cYa estas en un mapa, usa &f/kbffa leave &cpara salir."
   noIsGame: "&cNo te encuentras en el mapa."
   noAvailable: "&cNo hay mapas disponibles."
+  JoinPlayer: "&fEl jugador &6%player% &fha ingresado al mapa."
+  LeavePlayer: "&cEl jugador &f%player% &cha salido del mapa."
+  nextArena: "&aSe ha cambiado el mapa. Este mapa es llamado: &e%nextArena%&a."
+  coolDownArena: "&eEl mapa se cambia en &c%coolDownArena% &esegundos."
+  coolDownTitle: "%coolDownArenaTitle%"
 
+Arena:
+  NoDuplicate: "&cNo puedes crear el mismo mapa."
+  NoExistArena: "&cNo existe este mapa para eliminar."
+  SetMainLobby: "&aSe establecio el punto principal."
+  SetSpawn: "&aSe estableció el punto de inicio del mapa."
+  CreateArena: "&aSe ha creado la arena correctamente."
+  DeleteArena: "&cSe ha eliminado correctamente el mapa."
+  SetMinLobby: "&aSe establecio el minimo del lobby."
+  SetMaxLobby: "&aSe establecio el maximo del lobby."
+  SetMinArena: "&aSe establecio el maximo de la arena."
+  SetMaxArena: "&aSe establecio el maximo de la arena."
+  SaveArena: "&aSe ha guardado el mapa correctamente."
+  ErrorSave: "&cNo se pudo guardar el mapa ya que falta guardar un punto."
+
+Items:
+  StickName: "&9&lPALO MAGICO"
 
 version: 1.0

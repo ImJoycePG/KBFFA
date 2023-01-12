@@ -1,23 +1,29 @@
 package net.imjoycepg.mc.Game;
 
+import lombok.Getter;
 import net.imjoycepg.mc.KBFFA;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class ArenaManager{
+    @Getter
     private final List<Arena> arenas = new ArrayList<>();
 
-    public Arena createArena(String nameArena){
+    public void createArena(String nameArena){
         KBFFA.getInstance().getArenaFile().createMap(nameArena);
 
         FileConfiguration config = new YamlConfiguration();
@@ -29,7 +35,6 @@ public class ArenaManager{
 
         arenas.add(arena);
 
-        return arena;
     }
 
     public void addPlayer(Player player){
@@ -38,10 +43,12 @@ public class ArenaManager{
             return;
         }
 
+        player.sendMessage(StringUtils.repeat(" \n", 100));
+
         Arena currentArena = getCurrentArena();
 
         if (currentArena == null) {
-            for (Arena arena : getArenas()) {
+            for (Arena arena : arenas) {
                 if (arena.getPlayers().size() > 0) {
                     currentArena = arena;
                     break;
@@ -57,8 +64,17 @@ public class ArenaManager{
             player.setFireTicks(0);
             player.setFlying(false);
             player.setAllowFlight(false);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1000000, 1, true , false));
+
+            giveItems(player);
+
+            for(UUID uuid : currentArena.getPlayers()){
+                Bukkit.getPlayer(uuid).sendMessage(KBFFA.getInstance().getMessages().getString("Game.JoinPlayer")
+                        .replace("%player%", player.getName()));
+            }
+
         } else {
-            player.sendMessage("No hay ningún mapa disponible en este momento.");
+            player.sendMessage(KBFFA.getInstance().getMessages().getString("Game.noAvailable"));
         }
     }
 
@@ -87,20 +103,19 @@ public class ArenaManager{
     }
 
     public Arena getRandomArena(GameState state){
-        List<Arena> filteredArenas = new ArrayList<>();
+        Random random = new Random();
+        int randomIndex = random.nextInt(arenas.size());
         for(Arena arena : arenas){
             if(arena.getGameState() == state){
-                filteredArenas.add(arena);
+                return arenas.get(randomIndex);
             }
         }
 
-        if(filteredArenas.size() == 0) return null;
-
-        Random rand = new Random();
-        return arenas.get(rand.nextInt(filteredArenas.size()));
+        return null;
     }
 
     public void removePlayer(Player player){
+
         Arena a = null;
         for(Arena arena : arenas){
             if(arena.getPlayers().contains(player.getUniqueId())){
@@ -113,11 +128,18 @@ public class ArenaManager{
             return;
         }
 
+        for(UUID uuid : a.getPlayers()){
+            Bukkit.getPlayer(uuid).sendMessage(KBFFA.getInstance().getMessages().getString("Game.LeavePlayer")
+                    .replace("%player%", player.getName()));
+        }
+
         a.getPlayers().remove(player.getUniqueId());
         player.teleport(KBFFA.getInstance().getLocationUtil().deserialize(KBFFA.getInstance().getSettings().getString("MainLobby")));
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.setFireTicks(0);
+        player.removePotionEffect(PotionEffectType.SPEED);
+
     }
 
     public void removeArena(String nameArena){
@@ -144,10 +166,6 @@ public class ArenaManager{
             }
         }
         return false;
-    }
-
-    public List<Arena> getArenas(){
-        return arenas;
     }
 
     public void loadArenas(){
@@ -180,30 +198,49 @@ public class ArenaManager{
                 arena.setMinLobby(MinLobby);
                 arena.setMaxLobby(MaxLobby);
                 arena.setGameState(GameState.WAITING);
-
                 arenas.add(arena);
             }
         }
     }
 
-    public void saveArenas(){
-        for(Arena arena : arenas) {
-            FileConfiguration config = KBFFA.getInstance().getArenaFile().getArenaFile(arena.getNameArena());
+    public boolean isInsideCuboid(Location blockLocation, String section1, String section2){
+        double x = blockLocation.getX();
+        double y = blockLocation.getY();
+        double z = blockLocation.getZ();
 
-            config.set("SpawnArena", serializeLocation(arena.getSpawnArena()));
+        FileConfiguration config = KBFFA.getInstance().getArenaFile().getArenaFile(getCurrentArena().getNameArena());
 
-            config.set("MinArena", serializeLocation(arena.getMinArena()));
+        Location point1 = deserializeLocation(config.getString(section1));
+        Location point2 = deserializeLocation(config.getString(section2));
 
-            config.set("MaxArena", serializeLocation(arena.getMaxArena()));
+        double minX = Math.min(point1.getX(), point2.getX());
+        double maxX = Math.max(point1.getX(), point2.getX());
+        double minY = Math.min(point1.getY(), point2.getY());
+        double maxY = Math.max(point1.getY(), point2.getY());
+        double minZ = Math.min(point1.getZ(), point2.getZ());
+        double maxZ = Math.max(point1.getZ(), point2.getZ());
 
-            config.set("MinLobby", serializeLocation(arena.getMinLobby()));
+        return x >= minX && x <= maxX && y >= minY && y <= maxY && z >= minZ && z <= maxZ;
+    }
 
-            config.set("MaxLobby", serializeLocation(arena.getMaxLobby()));
+    public void giveItems(Player player){
+        if(isInGame(player)){
+            ItemStack stick = new ItemStack(Material.STICK, 1);
+            ItemMeta stickMeta = stick.getItemMeta();
+            stickMeta.setDisplayName(KBFFA.getInstance().getMessages().getString("Items.StickName"));
+            stickMeta.addEnchant(Enchantment.KNOCKBACK, 2, true);
+            stick.setDurability((short) 0);
+            stick.setItemMeta(stickMeta);
 
-
-
-            KBFFA.getInstance().getArenaFile().saveMap(arena.getNameArena(), config);
+            player.getInventory().setItem(0, stick);
         }
     }
 
+    public void ServerOff(){
+        for(UUID uuid : getCurrentArena().getPlayers()){
+            Bukkit.getPlayer(uuid).getInventory().clear();
+        }
+
+        getCurrentArena().getPlayers().clear();
+    }
 }

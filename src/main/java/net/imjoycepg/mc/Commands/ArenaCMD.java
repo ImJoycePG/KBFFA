@@ -24,16 +24,16 @@ public class ArenaCMD implements CommandExecutor {
 
                 if(args.length == 1){
                     if(args[0].equalsIgnoreCase("reload")){
-                        KBFFA.getInstance().getArenaManager().saveArenas();
                         KBFFA.getInstance().getSettings().reloadYMLS();
                         KBFFA.getInstance().getMessages().reloadYMLS();
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("General.reloadYAML"));
                     }
                 }
 
                 if(args.length == 1){
-                    if(args[0].equalsIgnoreCase("setmainlobby")){
+                    if(args[0].equalsIgnoreCase("setMainLobby")){
                         KBFFA.getInstance().getSettings().c.set("MainLobby", KBFFA.getInstance().getLocationUtil().serialize(player.getLocation()));
-                        player.sendMessage("El Lobby principal fue establecido");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.SetMainLobby"));
                         KBFFA.getInstance().getSettings().save();
                     }
                 }
@@ -44,51 +44,62 @@ public class ArenaCMD implements CommandExecutor {
                     String nameArena = args[1];
 
                     if(action.equalsIgnoreCase("create")){
+                        if(KBFFA.getInstance().getArenaFile().getArenaFile(nameArena) != null){
+                            player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.NoDuplicate"));
+                            return true;
+                        }
+
                         Arena arena = new Arena();
                         arena.setNameArena(nameArena);
                         KBFFA.getInstance().getArenaManager().createArena(nameArena);
-                        player.sendMessage("La arena fue creada");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.CreateArena"));
+
                         return true;
                     }
 
                     if(action.equalsIgnoreCase("delete") || action.equalsIgnoreCase("remove")){
+                        if(KBFFA.getInstance().getArenaFile().getArenaFile(nameArena) != null){
+                            player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.NoExistArena"));
+                            return true;
+                        }
+
                         KBFFA.getInstance().getArenaManager().removeArena(nameArena);
-                        player.sendMessage("El mapa fue eliminado correctamente");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.DeleteArena"));
                         return true;
                     }
 
                     if(action.equalsIgnoreCase("setspawn")){
                         Arena arena = KBFFA.getInstance().getArenaManager().getArena(nameArena);
                         arena.setSpawnArena(player.getLocation());
-                        player.sendMessage("El spawn de inicio fue establecido.");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.SetSpawn"));
                         return true;
                     }
 
                     if(action.equalsIgnoreCase("setMinLobby")){
                         Arena arena = KBFFA.getInstance().getArenaManager().getArena(nameArena);
                         arena.setMinLobby(player.getLocation());
-                        player.sendMessage("El minimo del Lobby fue establecido");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.SetMinLobby"));
                         return true;
                     }
 
                     if(action.equalsIgnoreCase("setMaxLobby")){
                         Arena arena = KBFFA.getInstance().getArenaManager().getArena(nameArena);
                         arena.setMaxLobby(player.getLocation());
-                        player.sendMessage("El maximo del Lobby fue establecido");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.SetMaxLobby"));
                         return true;
                     }
 
                     if(action.equalsIgnoreCase("setMinArena")){
                         Arena arena = KBFFA.getInstance().getArenaManager().getArena(nameArena);
                         arena.setMinArena(player.getLocation());
-                        player.sendMessage("El minimo de la arena fue establecido");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.SetMinArena"));
                         return true;
                     }
 
                     if(action.equalsIgnoreCase("setMaxArena")){
                         Arena arena = KBFFA.getInstance().getArenaManager().getArena(nameArena);
                         arena.setMaxArena(player.getLocation());
-                        player.sendMessage("El maximo de la arena fue establecido");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.SetMaxArena"));
                         return true;
                     }
 
@@ -96,8 +107,14 @@ public class ArenaCMD implements CommandExecutor {
 
                         Arena arena = KBFFA.getInstance().getArenaManager().getArena(nameArena);
                         arena.setGameState(GameState.WAITING);
+                        if(arena.getSpawnArena() == null && arena.getMaxArena() == null && arena.getMinArena() == null &&
+                            arena.getMinLobby() == null && arena.getMaxLobby() == null){
+                            player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.ErrorSave"));
+                            return true;
+                        }
+
                         arena.save();
-                        player.sendMessage("El mapa fue guardado correctamente.");
+                        player.sendMessage(KBFFA.getInstance().getMessages().getString("General.prefix") + KBFFA.getInstance().getMessages().getString("Arena.SaveArena"));
                         return true;
                     }
 
