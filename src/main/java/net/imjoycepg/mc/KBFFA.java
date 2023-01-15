@@ -5,6 +5,7 @@ import net.imjoycepg.mc.Commands.ArenaCMD;
 import net.imjoycepg.mc.Commands.MainCMD;
 import net.imjoycepg.mc.Game.ArenaFile;
 import net.imjoycepg.mc.Game.ArenaManager;
+import net.imjoycepg.mc.Game.ArrowTask;
 import net.imjoycepg.mc.Game.MapChangeTask;
 import net.imjoycepg.mc.Handlers.ArenaEvent;
 import net.imjoycepg.mc.Handlers.GeneralEvent;
@@ -18,10 +19,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class KBFFA extends JavaPlugin {
     @Getter
     private static KBFFA instance;
-    private ConfigFile settings, messages;
+    private ConfigFile settings, messages, items;
 
     private final ArenaManager arenaManager = new ArenaManager();
     private final MapChangeTask mapChangeTask = new MapChangeTask();
+    private final ArrowTask arrowTask = new ArrowTask();
     private final ArenaFile arenaFile = new ArenaFile();
     private final LocationUtil locationUtil = new LocationUtil();
 
@@ -30,6 +32,7 @@ public class KBFFA extends JavaPlugin {
         instance = this;
         settings = new ConfigFile(this, "config.yml");
         messages = new ConfigFile(this, "messages.yml");
+        items = new ConfigFile(this, "items.yml");
 
 
         getCommand("kbffa").setExecutor(new MainCMD());
@@ -42,6 +45,7 @@ public class KBFFA extends JavaPlugin {
 
         arenaManager.loadArenas();
         mapChangeTask.runTaskTimer(this, 0, 20L * 60L * settings.getInt("Time.ChangeMap"));
+        arrowTask.schedulerArrowTask();
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -46,9 +47,21 @@ public class ArenaEvent implements Listener {
                 Player player = (Player) event.getEntity();
                 if(KBFFA.getInstance().getArenaManager().isInsideCuboid(player.getLocation(),
                         "MinArena", "MaxArena")) {
-                    event.setDamage(0);
+                    event.setDamage(0.0);
                     event.setCancelled(true);
+                }
+            }
+        }
+    }
 
+    @EventHandler
+    public void onPlayerPvPDamage(EntityDamageByEntityEvent event){
+        if(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK){
+            if(event.getEntity() instanceof Player){
+                Player player = (Player) event.getEntity();
+                if(KBFFA.getInstance().getArenaManager().isInsideCuboid(player.getLocation(),
+                        "MinArena", "MaxArena")) {
+                    event.setDamage(0.0);
                 }
             }
         }
@@ -100,10 +113,9 @@ public class ArenaEvent implements Listener {
         FileConfiguration config = KBFFA.getInstance().getArenaFile().getArenaFile(arena.getNameArena());
 
         World world = KBFFA.getInstance().getArenaManager().deserializeLocation(config.getString("SpawnArena")).getWorld();
-        if(event.toWeatherState() || world.isThundering()){
+        if(event.toWeatherState()){
             event.setCancelled(true);
             world.setStorm(false);
-            world.setThundering(false);
         }
 
     }

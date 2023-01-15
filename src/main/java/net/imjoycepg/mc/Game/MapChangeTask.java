@@ -5,8 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.UUID;
@@ -62,7 +60,6 @@ public class MapChangeTask extends BukkitRunnable {
                 Bukkit.getPlayer(uuid).sendMessage(KBFFA.getInstance().getMessages().getString("Game.nextArena").replace("%nextArena%", nextArena.getNameArena()));
                 Bukkit.getPlayer(uuid).playSound(Bukkit.getPlayer(uuid).getLocation(), Sound.EXPLODE , 1F, 1F);
                 Bukkit.getPlayer(uuid).teleport(KBFFA.getInstance().getArenaManager().deserializeLocation(config.getString("SpawnArena")));
-                Bukkit.getPlayer(uuid).addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 1000000, 1));
             }
 
             currentArena.setGameState(GameState.WAITING);

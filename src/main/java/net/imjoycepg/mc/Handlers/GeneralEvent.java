@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -28,5 +29,10 @@ public class GeneralEvent implements Listener {
         Player player = event.getPlayer();
         event.setQuitMessage(null);
         KBFFA.getInstance().getArenaManager().removePlayer(player);
+    }
+
+    @EventHandler
+    public void onServerMobsSpawn(CreatureSpawnEvent event){
+        event.setCancelled(true);
     }
 }

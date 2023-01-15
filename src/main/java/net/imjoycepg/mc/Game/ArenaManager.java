@@ -228,11 +228,30 @@ public class ArenaManager{
             ItemStack stick = new ItemStack(Material.STICK, 1);
             ItemMeta stickMeta = stick.getItemMeta();
             stickMeta.setDisplayName(KBFFA.getInstance().getMessages().getString("Items.StickName"));
-            stickMeta.addEnchant(Enchantment.KNOCKBACK, 2, true);
+            stickMeta.addEnchant(Enchantment.KNOCKBACK, 1, true);
             stick.setDurability((short) 0);
             stick.setItemMeta(stickMeta);
 
+            ItemStack blocks = new ItemStack(Material.getMaterial(159), 64);
+
+            ItemStack bow = new ItemStack(Material.BOW, 1);
+            ItemMeta bowMeta = bow.getItemMeta();
+            bowMeta.setDisplayName(KBFFA.getInstance().getMessages().getString("Items.BowName"));
+            bowMeta.addEnchant(Enchantment.ARROW_KNOCKBACK, 1, true);
+            bow.setDurability((short) 0);
+            bow.setItemMeta(bowMeta);
+
+            ItemStack arrow = new ItemStack(Material.ARROW, 1);
+
+            ItemStack jumpPad = new ItemStack(Material.GOLD_PLATE, 1);
+
+
+
             player.getInventory().setItem(0, stick);
+            player.getInventory().setItem(1, blocks);
+            player.getInventory().setItem(8, bow);
+            player.getInventory().setItem(27, arrow);
+            player.getInventory().setItem(2, jumpPad);
         }
     }
 
